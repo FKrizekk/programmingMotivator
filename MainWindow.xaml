@@ -1,0 +1,36 @@
+﻿<Window x:Class="SlideOverlay.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Programming Motivator"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        WindowState="Maximized">
+
+    <Canvas x:Name="RootCanvas">
+        <Canvas x:Name="MainContainer"
+                Width="400"
+                Background="Transparent">
+            <!-- Transparent so you can see where it is -->
+
+            <Image x:Name="MyImage"
+                   Width="400"
+                   Stretch="Uniform"
+                   Canvas.Left="0" Canvas.Top="0"
+                   Source=".png"/>
+
+            <Image x:Name="ChildImage"
+                   Width="285" Height="167"
+                   Canvas.Left="290" Canvas.Top="-81"
+                   Source="bubble.png" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+            <TextBlock x:Name="OverlayText"
+                       TextWrapping="Wrap"
+                       Foreground="Black"
+                       FontSize="16"
+                       Canvas.Left="313" Canvas.Top="-65" Height="86" Width="140" HorizontalAlignment="Left" VerticalAlignment="Center"><Run Language="ja-jp" Text="You can do it!"/></TextBlock>
+        </Canvas>
+    </Canvas>
+</Window>
