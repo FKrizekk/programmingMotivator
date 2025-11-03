@@ -27,10 +27,10 @@
                    Source="bubble.png" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
             <TextBlock x:Name="OverlayText"
-                       TextWrapping="Wrap"
+                       TextWrapping="WrapWithOverflow"
                        Foreground="Black"
                        FontSize="16"
-                       Canvas.Left="313" Canvas.Top="-65" Height="86" Width="140" HorizontalAlignment="Left" VerticalAlignment="Center"><Run Language="ja-jp" Text="You can do it!"/></TextBlock>
+                       Canvas.Left="313" Canvas.Top="-65" Height="431" Width="140" HorizontalAlignment="Center" VerticalAlignment="Top"><Run Language="ja-jp" Text="You can do it!"/></TextBlock>
         </Canvas>
     </Canvas>
 </Window>

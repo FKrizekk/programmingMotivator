@@ -9,12 +9,21 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Reflection;
+using System.Text.Json;
 
 namespace SlideOverlay
 {
+    public class AppConfig
+    {
+        public int SlideIntervalSeconds { get; set; } = 30;
+        public int SlideWaitSeconds { get; set; } = 5;
+        public int MainImageWidth { get; set; } = 400;
+    }
+
     public partial class MainWindow : Window
     {
         const int GWL_EXSTYLE = -20;
+        const int WS_EX_TOOLWINDOW = 0x00000080;
         const int WS_EX_TRANSPARENT = 0x00000020;
         const int WS_EX_LAYERED = 0x00080000;
 
@@ -23,15 +32,24 @@ namespace SlideOverlay
         private int _currentIndex = 0;
         private int _currentQuoteIndex = 0;
         private readonly DispatcherTimer _cycleTimer;
-
+        AppConfig config;
+        
         public MainWindow()
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
 
+            string exeFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string configPath = Path.Combine(exeFolder, "config.json");
+            string json = File.ReadAllText(configPath);
+            config = JsonSerializer.Deserialize<AppConfig>(json);
+
+
+            MainContainer.Width = config.MainImageWidth;
+            MyImage.Width = config.MainImageWidth;
             _cycleTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(30)
+                Interval = TimeSpan.FromSeconds(config.SlideIntervalSeconds)
             };
             _cycleTimer.Tick += CycleTimer_Tick;
         }
@@ -40,13 +58,14 @@ namespace SlideOverlay
         {
             // make window click‑through
             var hwnd = new WindowInteropHelper(this).Handle;
-            int style = GetWindowLong(hwnd, GWL_EXSTYLE);
-            SetWindowLong(hwnd, GWL_EXSTYLE, style | WS_EX_TRANSPARENT | WS_EX_LAYERED);
+            int exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+            SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_TOOLWINDOW | WS_EX_LAYERED | WS_EX_TRANSPARENT);
 
             string exeFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             // load image folder
             string imagesFolder = Path.Combine(exeFolder, "Images");
             string quotesFile = Path.Combine(exeFolder, "quotes.txt");
+
             if (File.Exists(quotesFile))
             {
                 var externalQuotes = File.ReadAllLines(quotesFile)
@@ -117,7 +136,7 @@ namespace SlideOverlay
                 MainContainer.BeginAnimation(Canvas.TopProperty, animUp);
 
                 // wait then slide down
-                var waitTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1.0 + 5.0) };
+                var waitTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1.0 + config.SlideWaitSeconds) };
                 waitTimer.Tick += (s2, e2) =>
                 {
                     waitTimer.Stop();
